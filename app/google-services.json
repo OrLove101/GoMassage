@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "547089574828",
+    "firebase_url": "https://gomassage-aa69f-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "gomassage-aa69f",
+    "storage_bucket": "gomassage-aa69f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547089574828:android:8d853fd32b63a335d7e809",
+        "android_client_info": {
+          "package_name": "com.orlove101.android.gomassage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "547089574828-dv925f7vsug2rfdrjdn0if8j64voor3p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBL3Vw-WrPLbVcQTUa7Wo2jIxWx1LBno6Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "547089574828-dv925f7vsug2rfdrjdn0if8j64voor3p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

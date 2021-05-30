@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">GoMassage</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="back_to_registration">Back to registration</string>
+    <string name="invalid_input_values">Invalid input values</string>
+    <string name="failed_login">Invalid password or email</string>
+    <string name="login">Log in</string>
+    <string name="register">Register</string>
+    <string name="select_photo">SELECT PHOTO</string>
+</resources>

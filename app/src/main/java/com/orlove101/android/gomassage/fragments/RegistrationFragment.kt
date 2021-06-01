@@ -1,32 +1,19 @@
 package com.orlove101.android.gomassage.fragments
 
 import android.app.Activity
-import android.content.ContentResolver
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.util.Patterns
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -34,10 +21,7 @@ import com.google.firebase.storage.ktx.storage
 import com.orlove101.android.gomassage.R
 import com.orlove101.android.gomassage.model.User
 import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
 import de.hdodenhof.circleimageview.CircleImageView
-import java.lang.Exception
-import java.lang.IllegalArgumentException
 import java.util.*
 
 class RegistrationFragment: Fragment() {
@@ -83,7 +67,7 @@ class RegistrationFragment: Fragment() {
         }
 
         alreadyHaveAccountButton?.setOnClickListener {
-            (activity as? OnAlreadyHaveAccountClick)?.onAlreadyHaveAccountClick()
+            (activity as? RegistrationFragmentCommunicator)?.onAlreadyHaveAccountClick()
         }
 
         selectPhotoButton?.setOnClickListener {
@@ -116,25 +100,26 @@ class RegistrationFragment: Fragment() {
     }
 
     private fun uploadImageToFirebaseStorage() {
-        if ( selectedPhotoUri == null ) return
+        if ( selectedPhotoUri == null ) {
+            saveUserToFirebaseDatabase("Photo image is empty")
+        } else {
+            val filename = UUID.randomUUID().toString()
+            val ref = Firebase.storage.reference.child("/images/$filename")
 
-        val filename = UUID.randomUUID().toString()
-//        val ref = Firebase.storage.getReference("/images/$filename") the same as below
-        val ref = Firebase.storage.reference.child("/images/$filename")
+            ref.putFile(selectedPhotoUri!!)
+                .addOnSuccessListener {
+                    Log.d(TAG, "Successfully uploaded image: ${it.metadata?.path}")
 
-        ref.putFile(selectedPhotoUri!!)
-            .addOnSuccessListener {
-                Log.d(TAG, "Successfully uploaded image: ${it.metadata?.path}")
+                    ref.downloadUrl.addOnSuccessListener {
+                        Log.d(TAG, "File Location: $it")
 
-                ref.downloadUrl.addOnSuccessListener {
-                    Log.d(TAG, "File Location: $it")
-
-                    saveUserToFirebaseDatabase(it.toString())
-                }
-                    .addOnFailureListener {
-                        Log.d(TAG, "Fail to download profile image url")
+                        saveUserToFirebaseDatabase(it.toString())
                     }
-            }
+                        .addOnFailureListener {
+                            Log.d(TAG, "Fail to download profile image url")
+                        }
+                }
+        }
     }
 
     private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
@@ -147,6 +132,7 @@ class RegistrationFragment: Fragment() {
         ref.setValue(user)
             .addOnSuccessListener {
                 Log.d(TAG, "User uploaded to database successfully")
+                (activity as? RegistrationFragmentCommunicator)?.onUserRegistered()
             }
             .addOnFailureListener {
                 Log.d(TAG, "User uploading to database failed")
@@ -168,8 +154,9 @@ class RegistrationFragment: Fragment() {
         inputMethodManager?.hideSoftInputFromWindow(activity?.currentFocus?.windowToken, 0)
     }
 
-    interface OnAlreadyHaveAccountClick {
+    interface RegistrationFragmentCommunicator {
         fun onAlreadyHaveAccountClick()
+        fun onUserRegistered()
     }
 
     companion object {

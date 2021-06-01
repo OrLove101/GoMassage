@@ -13,7 +13,6 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.orlove101.android.gomassage.R
@@ -44,12 +43,13 @@ class LoginFragment: Fragment() {
         }
 
         backToRegistrationEditText?.setOnClickListener {
-            (activity as? OnBackToRegistrationClick)?.onBackToRegistrationClick()
+            (activity as? LoginFragmentCommunicator)?.onBackToRegistrationClick()
         }
     }
 
-    interface OnBackToRegistrationClick {
+    interface LoginFragmentCommunicator {
         fun onBackToRegistrationClick()
+        fun onUserLogin()
     }
 
     private fun performLogin() {
@@ -67,9 +67,12 @@ class LoginFragment: Fragment() {
             .addOnCompleteListener {
                 if ( !it.isSuccessful ) return@addOnCompleteListener
                 Log.d(TAG, "User login with uid: ${it.result?.user?.uid}")
+
+                (activity as? LoginFragmentCommunicator)?.onUserLogin()
             }
             .addOnFailureListener {
                 Log.d(TAG, "Failed to login: ${it.message}")
+
                 Snackbar.make(view as View, R.string.failed_login, Snackbar.LENGTH_LONG)
                     .setAction("x") {}
                     .show()
